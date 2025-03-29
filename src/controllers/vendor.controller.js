@@ -126,71 +126,85 @@ const updateProduct = asyncHandler(async (req, res) => {
 })
 
 const getProductById = asyncHandler(async (req, res) => {
-    const {productId} = req.params
-
-    if (!productId) {
-        throw new ApiError(400, "Product id is required")
+    try {
+        const {productId} = req.params
+    
+        if (!productId) {
+            throw new ApiError(400, "Product id is required")
+        }
+    
+        const product = await Product.findById(productId)
+    
+        if (!product) {
+            throw new ApiError(400, "Product does not exist")
+        }
+    
+        return res
+        .status(201)
+        .json(new ApiResponse(
+            201,
+            product,
+            "Product get successfully"
+        ))
+    } catch (error) {
+        console.error("Failed to get product by id: ", error);        
     }
-
-    const product = await Product.findById(productId)
-
-    if (!product) {
-        throw new ApiError(400, "Product does not exist")
-    }
-
-    return res
-    .status(201)
-    .json(new ApiResponse(
-        201,
-        product,
-        "Product get successfully"
-    ))
 })
 
 const getAllProduct = asyncHandler(async (req, res) => {
-    const products = await Product.aggregate([
-        {
-            $group: {
-                _id: null,
-                avgRating: { $avg: "$ratings"},
-                totalStock: {$sum: "$stock"},
-                products: {$push: "$$ROOT"} 
+    try {
+        const products = await Product.aggregate([
+            {
+                $group: {
+                    _id: null,
+                    avgRating: { $avg: "$ratings"},
+                    totalStock: {$sum: "$stock"},
+                    products: {$push: "$$ROOT"} 
+                }
             }
-        }
-    ])
-
-    return res
-    .status(200)
-    .json(new ApiResponse(
-        200,
-        products,
-        "All products are successfully fetched"
-    ))
+        ])
+    
+        return res
+        .status(200)
+        .json(new ApiResponse(
+            200,
+            products,
+            "All products are successfully fetched"
+        ))
+    } catch (error) {
+        console.error("Failed to get All product: ", error);
+        
+    }
 })
 
 const changeProductStatus = asyncHandler(async (req, res) => {
-    const {productId} = req.params
-    const {status} = req.body //true or false
-
-    if (!productId) {
-        throw new ApiError(400, "Product id is required")
-    }
-
-    const product = await Product.findByIdAndUpdate(
-        productId,
-        {
-            isActive: status
-        },
-        {new : true}
-    )
-
-    return res
-    .status(201)
-    .json(new ApiResponse(
-        201,
-        product,
-        "Product status changed"
-    ))
+try {
+        const {productId} = req.params
+        const {status} = req.body //true or false
+    
+        if (!productId) {
+            throw new ApiError(400, "Product id is required")
+        }
+    
+        const product = await Product.findByIdAndUpdate(
+            productId,
+            {
+                isActive: status
+            },
+            {new : true}
+        )
+    
+        return res
+        .status(201)
+        .json(new ApiResponse(
+            201,
+            product,
+            "Product status changed"
+        ))
+} catch (error) {
+    console.error("Failed to change product status: ", error);
+    
+}
 })
 
 export {
