@@ -15,5 +15,10 @@ app.use(express.json())
 app.use(express.static("public"))
 
 //route declaration
+import userRouter from "./routes/user.routes.js"
+import adminRouter from "./routes/vendor.routes.js"
+
+app.use("/api/v1/user", userRouter)
+app.use("/api/v1/admin", adminRouter)
 
 export {app}

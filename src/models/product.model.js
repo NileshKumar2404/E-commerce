@@ -40,7 +40,11 @@ const productSchema = new Schema({
     reviews: {
         type: Schema.Types.ObjectId,
         ref: 'Review',
-        required: true 
+        // required: true 
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     }
 }, {timestamps: true})
 

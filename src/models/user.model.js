@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import bcrypt from 'bcrypt'
-import jwt from 'json-web-token'
+import jwt from 'jsonwebtoken'
 
 const userSchema = new Schema({
     name: {
@@ -23,7 +23,6 @@ const userSchema = new Schema({
         state: String,
         zipCode: String,
         country: String,
-        phoneNumber: String
     }],
     password: {
         type: String,
@@ -36,6 +35,9 @@ const userSchema = new Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    refreshToken: {
+        type: String
     }
 },{timestamps: true})
 
@@ -57,8 +59,6 @@ userSchema.methods.generateAccessToken = async function() {
             email: this.email,
             phone: this.phone,
             address: this.address,
-            wishlist: this.wishlist,
-            isAdmin: this.isAdmin
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
