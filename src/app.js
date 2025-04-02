@@ -22,6 +22,7 @@ import wishlistRouter from "./routes/wishlist.routes.js"
 import orderRouter from "./routes/order.routes.js"
 import reviewRouter from  "./routes/review.routes.js"
 import paymentRouter from "./routes/payment.routes.js"
+import notificationRouter from "./routes/notification.routes.js"
 
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/admin", adminRouter)
@@ -30,5 +31,6 @@ app.use("/api/v1/wishlist", wishlistRouter)
 app.use("/api/v1/order", orderRouter)
 app.use("/api/v1/review", reviewRouter)
 app.use("/api/v1/payment", paymentRouter)
+app.use("/api/v1/notification", notificationRouter)
 
 export {app}
