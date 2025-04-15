@@ -84,6 +84,7 @@ const getUserWishlist = asyncHandler(async (req, res) => {
         {
             $project: {
                 _id: 0,
+                "wishlistItems._id": 1,
                 "wishlistItems.name": 1,
                 "wishlistItems.brand": 1,
                 "wishlistItems.price": 1,

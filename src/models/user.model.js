@@ -2,6 +2,16 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 
+const addressSchema = new Schema({
+    fullName: String,
+    phoneNumber: String,
+    pinCode: String,
+    state: String,
+    city: String,
+    houseNo: String,
+    roadName: String
+}, {_id:true})
+
 const userSchema = new Schema({
     name: {
         type: String,
@@ -16,14 +26,8 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
-    address: [{
-        fullName: String,
-        street: String,
-        city: String,
-        state: String,
-        zipCode: String,
-        country: String,
-    }],
+    address: [addressSchema],
+    
     password: {
         type: String,
         required: true

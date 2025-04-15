@@ -81,7 +81,8 @@ const getUserOrders = asyncHandler(async(req, res) => {
             },
             {
                 $project: {
-                    user: 0
+                    user: 0,
+                    productDetails: 0
                 }
             }
         ])

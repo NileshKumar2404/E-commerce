@@ -13,6 +13,11 @@ app.use(cookieParser())
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
 app.use(express.static("public"))
+app.use((req, res, next) => {
+    console.log("Received ${req.method} request with body:", req.body);
+    console.log("Received ${req.method} request with params:", req.params);
+    next();
+});
 
 //route declaration
 import userRouter from "./routes/user.routes.js"
@@ -23,6 +28,7 @@ import orderRouter from "./routes/order.routes.js"
 import reviewRouter from  "./routes/review.routes.js"
 import paymentRouter from "./routes/payment.routes.js"
 import notificationRouter from "./routes/notification.routes.js"
+import addressRouter from "./routes/address.routes.js"
 
 app.use("/api/v1/user", userRouter)
 app.use("/api/v1/admin", adminRouter)
@@ -32,5 +38,6 @@ app.use("/api/v1/order", orderRouter)
 app.use("/api/v1/review", reviewRouter)
 app.use("/api/v1/payment", paymentRouter)
 app.use("/api/v1/notification", notificationRouter)
+app.use("/api/v1/address", addressRouter)
 
 export {app}

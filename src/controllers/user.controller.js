@@ -164,15 +164,17 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 })
 
 const updateAccountDetails = asyncHandler(async(req, res) => {
-    const {address, phone, email} = req.body
+    const {street, city, state, country, phone} = req.body
 
     const user = await User.findByIdAndUpdate(
         req.user._id,
         {
             $set: {
-                address: address,
+                "address.0.street": street,
+                "address.0.city": city,
+                "address.0.state": state,
+                "address.0.country": country,
                 phone: phone,
-                email: email,
             }
         },
         {new: true}
