@@ -1,5 +1,15 @@
 import mongoose, { Schema } from "mongoose";
 
+const addressSchema = new Schema({
+    fullName: String,
+    phoneNumber: String,
+    pinCode: String,
+    state: String,
+    city: String,
+    houseNo: String,
+    roadName: String
+}, {_id:true})
+
 const orderSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
@@ -16,13 +26,9 @@ const orderSchema = new Schema({
         type: Number,
         required: true
     },
-    address: {
-        street: { type: String, required: true },
-        city: { type: String, required: true },
-        state: { type: String, required: true },
-        zipCode: { type: String},
-        country: { type: String, required: true },
-    },
+    
+    address: addressSchema,
+
     paymentStatus: {
         type: Boolean,
         default: false,

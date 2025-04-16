@@ -27,27 +27,19 @@ try {
     
         // Generate a unique tracking ID
         const trackingId = `TRK-${crypto.randomBytes(5).toString("hex").toUpperCase()}`;
+
+        const selectedAddress = user.address.find(addr => addr._id.toString() === req.body.addressId)
+        if(!selectedAddress) throw new ApiError(400, "Selected address not found")
         
         const order = await Order.create({
             user: userId,
             products: cart.products,
             totalAmount: totalAmount,
-            address: user.address[0],
+            address: selectedAddress,
             paymentStatus: true,
             orderStatus: "Pending",
             trackingID: trackingId
         })
-    
-        await Cart.findOneAndUpdate(
-            {
-                user: userId
-            },
-            {
-                $set: {
-                products: []
-                }
-            }
-        )
     
         return res
         .status(201)
