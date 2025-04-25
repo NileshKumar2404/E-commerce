@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import { Order } from "../models/order.model.js";
+import {Product} from "../models/product.model.js"
 import crypto from 'crypto'
 import { Cart } from "../models/cart.model.js";
 
@@ -10,36 +11,61 @@ import { Cart } from "../models/cart.model.js";
 const placeOrder = asyncHandler(async(req, res) => {
 try {
         const userId = req.user._id
+        const {productId, quantity, addressId} = req.body
         console.log(userId);
         
         const user = await User.findById(userId)
         if (!user || !user.address || user.address.length === 0) {
             throw new ApiError(400, "User address not found");
         }
+
+        const selectedAddress = user.address.find(addr => addr._id.toString() === addressId)
+        if(!selectedAddress) throw new ApiError(400, "Selected address not found")
     
-        const cart = await Cart.findOne({user: userId}).populate("products.product")
-        if(!cart || cart.products.length == 0) throw new ApiError(400 , "Cart not found");
-    
+        let products = []
         let totalAmount = 0
-        cart.products.forEach(item => {
-            totalAmount += item.product.price * item.quantity
-        })
+
+        if(productId && quantity){
+            //Case 1: Buying a single product
+            const product = await Product.findById(productId)
+            if(!product) throw new ApiError(400, "Product not found");
+
+            products.push({
+                product: productId,
+                quantity: quantity
+            })
+
+            totalAmount = product.price * quantity
+        }else{
+            //Case 2: Buying all the products in the cart
+            const cart = await Cart.findOne({user: userId}).populate("products.product")
+            if (!cart || cart.products.length === 0) throw new ApiError(400, "Cart not found");
+
+            products = cart.products.map(item => ({
+                product: item.product._id,
+                quantity: item.quantity
+            }))
+
+            totalAmount = cart.products.reduce((sum, item) => sum + item.product.price * item.quantity, 0)
+
+            cart.products = []
+            await cart.save()
+        }
     
         // Generate a unique tracking ID
         const trackingId = `TRK-${crypto.randomBytes(5).toString("hex").toUpperCase()}`;
-
-        const selectedAddress = user.address.find(addr => addr._id.toString() === req.body.addressId)
-        if(!selectedAddress) throw new ApiError(400, "Selected address not found")
         
-        const order = await Order.create({
+        let order = await Order.create({
             user: userId,
-            products: cart.products,
+            products: products,
             totalAmount: totalAmount,
             address: selectedAddress,
             paymentStatus: true,
             orderStatus: "Pending",
             trackingID: trackingId
         })
+
+        order = await order.populate("products.product")
     
         return res
         .status(201)
