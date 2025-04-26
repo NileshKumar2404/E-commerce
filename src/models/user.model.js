@@ -36,7 +36,7 @@ const userSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Product',
     }],
-    isAdmin: {
+    isVendor: {
         type: Boolean,
         default: false
     },

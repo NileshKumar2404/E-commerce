@@ -6,7 +6,7 @@ import { changeProductStatus, deleteProduct, getAllProduct, getProductById, regi
 const router = Router()
 
 
-router.route("/register-product").post(verifyJWT, 
+router.route("/register-product").post(verifyJWT,
     upload.fields([
         {
             name: "images",
@@ -17,8 +17,8 @@ router.route("/register-product").post(verifyJWT,
 )
 router.route("/get-product").get(verifyJWT, getAllProduct)
 router.route("/delete/:productId").delete(verifyJWT, deleteProduct)
-router.route("/update/:productId").put(verifyJWT,updateProduct)
-router.route("/get/:productId").get(verifyJWT,getProductById)
+router.route("/update/:productId").put(verifyJWT, updateProduct)
+router.route("/get/:productId").get(verifyJWT, getProductById)
 router.route("/update-status/:productId").put(verifyJWT, changeProductStatus)
 
 export default router
